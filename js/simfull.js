@@ -11,8 +11,8 @@
 
 /* ---------- الدارات: مقطع، قاطع، طول تقريبي ---------- */
 const FC = {
-  1: { name: "إنارة ومراوح الغرف والممر", s: 1.5, brk: 10, len: 26, color: "#f59e0b" },
-  2: { name: "إنارة ومراوح صالون ومطبخ وحمام", s: 1.5, brk: 10, len: 22, color: "#eab308" },
+  1: { name: "إنارة ومراوح الغرف والممر", s: 1.5, brk: 10, len: 26, color: "#ea580c" },
+  2: { name: "إنارة ومراوح صالون ومطبخ وحمام", s: 1.5, brk: 10, len: 22, color: "#ca8a04" },
   3: { name: "مآخذ غرف النوم", s: 2.5, brk: 16, len: 18, color: "#38bdf8" },
   4: { name: "مآخذ الصالون", s: 2.5, brk: 16, len: 15, color: "#818cf8" },
   5: { name: "مآخذ مطبخ — سطح عمل", s: 2.5, brk: 16, len: 14, color: "#fb7185" },
@@ -135,9 +135,12 @@ function fpathD(pts){ return "M" + pts.map(p => p.join(" ")).join(" L"); }
 function buildFull(){
   const host = document.getElementById("view-full");
   const rooms = FROOMS.map(r => `<rect x="${r.x}" y="${r.y}" width="${r.w}" height="${r.h}" fill="${r.c}" class="room"/><text x="${r.x + r.w / 2}" y="${r.y + 24}" class="room-t">${r.name}</text>`).join("");
-  const wires = Object.keys(FPATHS).map(n => FPATHS[n].map(p =>
-    `<path d="${fpathD(p)}" class="fwire" data-wire="${n}" style="stroke:${FC[n].color};stroke-width:${(FC[n].s * 1.6 + 1).toFixed(1)}"/>
-     <path d="${fpathD(p)}" class="fwire-hit" data-wire="${n}"/>`).join("")).join("");
+  const wires = Object.keys(FPATHS).map(n => FPATHS[n].map(p => {
+    const ww = FC[n].s * 2.8 + 3;
+    return `<path d="${fpathD(p)}" class="fconduit" style="stroke-width:${(ww + 6.5).toFixed(1)}"/>
+     <path d="${fpathD(p)}" class="fwire" data-wire="${n}" style="stroke:${FC[n].color};stroke-width:${ww.toFixed(1)}"/>
+     <path d="${fpathD(p)}" class="fwire-hit" data-wire="${n}"/>`;
+  }).join("")).join("");
   const devs = FDEV.map(d => `
     <g class="fdev" data-dev="${d.id}" transform="translate(${d.x},${d.y})">
       <circle class="halo" r="27"/><circle class="dev-bg" r="15.5"/>
@@ -157,6 +160,12 @@ function buildFull(){
     <p class="full-sub">هذا هو التطبيق كله الآن: بيت واحد تتعلم منه كل شيء. انقر أي مكوّن (عامود، عداد، سلك، قاطع، مفتاح، مأخذ، مروحة…) لترى بطاقته التعليمية، وشغّل البيت من مفاتيحه الجدارية ولوحته الحقيقية. واتبع «المسار التعليمي» يميناً — يقودك من الصفر مهمةً مهمة.</p>
     <div class="full-main">
       <div class="full-plan">
+        <div class="full-layers">
+          <b>الطبقات:</b>
+          <button class="chip active" data-layer="fWires">🧵 المواسير والأسلاك</button>
+          <button class="chip active" data-layer="fDevsG">🔌 الأجهزة والمفاتيح</button>
+          <span class="hint">الأسلاك هي الخطوط الملوّنة السميكة الخارجة من اللوحة وسط الممر إلى كل غرفة — انقر أيّاً منها لقراءة مقطعه وتياره وهبوط جهده.</span>
+        </div>
         <svg viewBox="0 0 1240 800" class="full-svg" id="fSvg">
           <g data-info="pole" class="clickable">
             <line x1="1130" y1="250" x2="1130" y2="45" class="pole"/>
@@ -196,8 +205,8 @@ function buildFull(){
             <rect x="-19" y="-22" width="38" height="44" rx="5" class="panel-box"/>
             <text y="5" class="panel-t">🎛️</text><text y="38" class="dev-name">اللوحة</text>
           </g>
-          ${devs}
-          ${sws}
+          <g id="fDevsG">${devs}
+          ${sws}</g>
           <g data-info="socket" class="clickable"><rect x="492" y="440" width="17" height="13" rx="2" class="sock"/><text x="500" y="432" class="sw-reg">مأخذ فارغ</text></g>
           <g data-info="socket" class="clickable"><rect x="82" y="292" width="17" height="13" rx="2" class="sock"/><text x="90" y="284" class="sw-reg">مأخذ فارغ</text></g>
         </svg>
@@ -454,6 +463,12 @@ function refreshFull(){
 
 /* ---------- الربط ---------- */
 function bindFull(){
+  document.querySelectorAll("#view-full [data-layer]").forEach(btn => btn.addEventListener("click", () => {
+    const g = document.getElementById(btn.dataset.layer); if (!g) return;
+    const hide = g.style.display !== "none";
+    g.style.display = hide ? "none" : "";
+    btn.classList.toggle("active", !hide);
+  }));
   const svg = document.getElementById("fSvg");
   svg.addEventListener("click", e => {
     const swG = e.target.closest("[data-sw]"); if (swG) { toggleSwitch(FSW.find(s => s.id === swG.dataset.sw)); return; }

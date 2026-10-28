@@ -158,7 +158,11 @@ th{background:var(--chip)}
 .earth-rod{fill:#b45309;stroke:#78350f;stroke-width:1.5}
 .inv-box{fill:#ecfccb;stroke:#4d7c0f;stroke-width:2}
 .sock{fill:#fff;stroke:#78716c;stroke-width:1.5}
-.fwire{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.55;pointer-events:none}
+.fconduit{fill:none;stroke:#e3dac6;stroke-linecap:round;stroke-linejoin:round;opacity:.95;pointer-events:none}
+.fwire{fill:none;stroke-linecap:round;stroke-linejoin:round;opacity:.95;pointer-events:none}
+.full-layers{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.full-layers .chip.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.full-layers .hint{color:var(--muted);font-size:.85rem}
 .fwire.flow{opacity:1;stroke-dasharray:10 7;animation:dashmove 1.4s linear infinite}
 @keyframes dashmove{to{stroke-dashoffset:-34}}
 .fwire-hit{fill:none;stroke:transparent;stroke-width:17;cursor:pointer;pointer-events:stroke}
