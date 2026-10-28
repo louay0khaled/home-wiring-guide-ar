@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تمديدات الكهرباء المنزلية — من العامود إلى الشقة</title>
+<meta name="description" content="تطبيق تعليمي عربي تطبيقي لتعليم تمديدات الكهرباء المنزلية الحديثة العملية والاقتصادية — من كهرباء الدولة والعداد حتى آخر نقطة في الشقة، مع نماذج منازل سورية كاملة وحاسبات وقوائم مواد.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#b45309">
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="badge">⚡ تطبيق تعليمي عملي — عربي بالكامل</div>
+    <h1>تمديدات الكهرباء المنزلية<br>من العامود… إلى آخر نقطة في الشقة</h1>
+    <p class="sub">كهرباء حديثة <b>عملية واقتصادية</b>: تأسيس سليم، حمايات صحيحة، مواد حديثة بلا بهرجة —
+    لا منازل ذكية فاخرة ولا أوامر صوتية. من كهرباء الدولة والعداد، إلى اللوحة والدارات،
+    مع خطَّي الاشتراك والإنفرتر كما في بيوتنا، ونماذج سورية كاملة تُنفَّذ أثناء التعلم.</p>
+    <div class="progress-box">
+      <div class="progress-label"><span>تقدّمك في الدروس</span><span id="progressText">٠ من ٠</span></div>
+      <div class="progress-bar"><div id="progressFill"></div></div>
+    </div>
+    <div class="safety-note">⛑️ قاعدة لا تُكسر: افصل القاطع، تحقّق بغياب الجهد بفاحص سليم، ثم اعمل. هذا التطبيق تعليمي — والربط عند العداد وشبكة الدولة يتم عبر شركة الكهرباء والفني المؤهل.</div>
+  </div>
+</header>
+
+<nav class="tabs wrap" id="tabs">
+  <button class="tab active" data-tab="lessons">📚 الدروس</button>
+  <button class="tab" data-tab="models">🏠 النماذج السورية التطبيقية</button>
+  <button class="tab" data-tab="calc">🧮 الحاسبات</button>
+  <button class="tab" data-tab="materials">🛒 المواد الحديثة</button>
+  <button class="tab" data-tab="checks">✅ قوائم الفحص</button>
+  <button class="tab" data-tab="glossary">📖 المصطلحات</button>
+</nav>
+
+<main class="wrap">
+  <div class="search-row">
+    <input id="globalSearch" type="search" placeholder="ابحث في الدروس والمواد والمصطلحات… (مثال: ديفاتير، هبوط الجهد، سخان)">
+  </div>
+
+  <section id="view-lessons" class="view active"></section>
+  <section id="view-models" class="view"></section>
+
+  <section id="view-calc" class="view">
+    <div class="grid2">
+      <div class="card">
+        <h3>🧮 حاسبة مقطع السلك والقاطع</h3>
+        <label>قدرة الحمل (واط) <input id="wPower" type="number" value="2000" min="1"></label>
+        <label>طول مسار السلك ذهاباً (متر) <input id="wLen" type="number" value="20" min="1"></label>
+        <label>نوع الدارة
+          <select id="wType"><option value="3">مآخذ / أحمال (هبوط مسموح ٥٪)</option><option value="2">إنارة (هبوط مسموح ٣٪)</option></select>
+        </label>
+        <button class="btn" onclick="calcWire()">احسب</button>
+        <div id="wireResult" class="result"></div>
+        <p class="hint">نحاس 220V طور واحد. التحمل الحراري داخل ماسورة بقيم محافظة، والاختيار النهائي للأكبر بين شرطَي التيار وهبوط الجهد.</p>
+      </div>
+      <div class="card">
+        <h3>🏠 حاسبة الحمل الكلي للشقة</h3>
+        <div id="loadList"></div>
+        <label>معامل التزامن <input id="loadDiv" type="number" value="0.65" step="0.05" min="0.3" max="1"></label>
+        <button class="btn" onclick="calcLoad()">احسب الرئيسي وكابل الدخول</button>
+        <div id="loadResult" class="result"></div>
+        <p class="hint">فعّل الأجهزة التي تملكها وعدّل العدد. النتيجة إرشادية لتخطيط اللوحة وكابل ما بعد العداد.</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🧾 مولّد قائمة مواد تقريبية لمشروعك</h3>
+      <div class="grid3">
+        <label>نقاط إنارة <input id="bLights" type="number" value="12" min="0"></label>
+        <label>نقاط مآخذ <input id="bSockets" type="number" value="18" min="0"></label>
+        <label>دارات ثقيلة (مكيف/سخان/فرن…) <input id="bHeavy" type="number" value="4" min="0"></label>
+        <label>متوسط طول دارة الإنارة (م) <input id="bLenL" type="number" value="12" min="1"></label>
+        <label>متوسط طول دارة المآخذ (م) <input id="bLenS" type="number" value="14" min="1"></label>
+        <label>متوسط طول الدارة الثقيلة (م) <input id="bLenH" type="number" value="10" min="1"></label>
+      </div>
+      <button class="btn" onclick="calcBom()">وّلد القائمة</button>
+      <div id="bomResult" class="result"></div>
+      <p class="hint">تقدير تعليمي بمعاملات عملية (٣ أسلاك لكل دارة + هامش ١٥٪) — قارنه بقوائم مواد النماذج السورية وعدّله على قياسات بيتك الفعلية.</p>
+    </div>
+  </section>
+
+  <section id="view-materials" class="view"></section>
+  <section id="view-checks" class="view"></section>
+  <section id="view-glossary" class="view"></section>
+</main>
+
+<footer class="wrap foot">
+  <p>مشروع تعليمي مفتوح — راجع دائماً كتيّبات المصنّعين والقوانين المحلية، ونفّذ الربط عند العداد وشبكة الدولة عبر الجهات المختصة والفنيين المؤهلين. ⚡ السلامة أولاً، دائماً.</p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/data2.js"></script>
+<script src="js/models.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
