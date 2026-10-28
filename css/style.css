@@ -111,7 +111,7 @@ th{background:var(--chip)}
 .dev{cursor:pointer}
 .dev-bg{fill:#fff;stroke:#78716c;stroke-width:1.6}
 .dev-icon{font-size:15px;text-anchor:middle}
-.dev-name{font-size:10.5px;text-anchor:middle;fill:#44403c;font-weight:600}
+.dev-name{font-size:11.5px;text-anchor:middle;fill:#292524;font-weight:700;paint-order:stroke;stroke:#fffef9;stroke-width:3.5px;stroke-linejoin:round}
 .dev .halo{fill:#fde047;opacity:0;transition:opacity .3s}
 .dev.on .halo{opacity:.55}
 .dev.on .dev-bg{stroke:var(--brand);stroke-width:2.6;fill:#fffbeb}

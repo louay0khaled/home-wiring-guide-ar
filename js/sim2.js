@@ -165,6 +165,7 @@ function buildSim2(){
   bindSim2();
   document.querySelector('#view-sim2 [data-src="d"]').classList.add("active");
   setStage2(0, true);
+  refreshDevs();
   setInterval(tickSim2, 1000);
 }
 
@@ -218,7 +219,8 @@ function bindSim2(){
   document.getElementById("s2Reset").addEventListener("click", () => location.reload());
   document.getElementById("s2ResetBrk").addEventListener("click", () => {
     S2.tripped = false; document.getElementById("s2Trip").classList.add("hidden");
-    setMsg("أعدتَ رفع القاطع. الأحمال مطفأة — شغّل بحكمة هذه المرة وراقب الحدّ."); refreshDevs();
+    if (DEVICES.find(d => d.id === "fridge").src.includes(S2.source)) S2.on.add("fridge");
+    setMsg("أعدتَ رفع القاطع وعاد البراد للعمل وحده (حمل أساسي دائم). بقية الأحمال مطفأة — شغّل بحكمة هذه المرة وراقب الحدّ."); refreshDevs();
   });
 }
 function highlightCircuit(n, on){
@@ -264,6 +266,8 @@ function toggleDev(id){
   refreshDevs();
 }
 function refreshDevs(){
+  const tripBox = document.getElementById("s2Trip");
+  if (tripBox) tripBox.classList.toggle("hidden", !S2.tripped);
   document.querySelectorAll("#view-sim2 .dev").forEach(g => {
     const d = DEVICES.find(x => x.id === g.dataset.dev);
     g.classList.toggle("on", S2.on.has(d.id) && !S2.tripped && d.src.includes(S2.source));
@@ -301,10 +305,10 @@ function tickSim2(){
   /* البطارية: تنفد على الإنفرتر وتُشحن على الدولة (زمن مسرّع للتعليم) */
   if (S2.source === "i" && !S2.tripped) {
     const t = totalW();
-    if (t > 0) { S2.batteryWh = Math.max(0, S2.batteryWh - t * 0.06); changed = true;
+    if (t > 0) { S2.batteryWh = Math.max(0, S2.batteryWh - t * 0.02); changed = true;
       if (S2.batteryWh === 0) { S2.on.clear(); setMsg("🪫 فرغت البطارية وأطفأ الإنفرتر نفسه حمايةً لها. بدّل إلى الدولة لشحنها وتشغيل البيت."); } }
   } else if (S2.source === "d" && S2.batteryWh < BAT_MAX) {
-    S2.batteryWh = Math.min(BAT_MAX, S2.batteryWh + 55); changed = true;
+    S2.batteryWh = Math.min(BAT_MAX, S2.batteryWh + 25); changed = true;
   }
   /* الخزان والعوّامة */
   if (S2.on.has("pump") && !S2.tripped && DEVICES.find(d => d.id === "pump").src.includes(S2.source)) {
